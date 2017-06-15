@@ -1,0 +1,88 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": " ",
+	"Parameters": {},
+	"Mappings": {
+		"Image mappings": {
+			"us-west-2": {
+				"WIN2012R2": "ami-7fc4e31a"
+			}
+		},
+		"Resources": {
+			"MyEC2Instance": {
+				"Type": "AWS::EC2::Instance",
+				"Properties": {
+					"InstanceType": "t2.micro",
+					"ImageId": "ami-7fc4e31a",
+					"KeyName": "testkey",
+					"SubnetId": "subnet-63a8602e",
+					"BlockDeviceMappings": [{
+						"DeviceName": "/dev/sda1",
+						"Ebs": {
+							"VolumeSize": "50"
+						}
+					}],
+					"Tags": [{
+						"Key": "Name",
+						"Value": "Jeeva-Jegan-Test1"
+					}]
+				},
+				"NewVolume": {
+					"Type": "AWS::EC2::Volume",
+					"Properties": {
+						"Size": "100",
+						"VolumeType": "gp2",
+						"AvailabilityZone": {
+							"Fn::GetAtt": ["Ec2Instance", "AvailabilityZone"]
+
+						}
+					}
+				},
+				"Tags": [{
+					"Key": "Name",
+					"Value": "Jeeva-Jegan-Test1"
+				}]
+			},
+			"DeletionPolicy": "Snapshot"
+		},
+		"MountPoint": {
+			"Type": "AWS::EC2::VolumeAttachment",
+			"Properties": {
+				"InstanceId": {
+					"Ref": "Ec2Instance"
+				},
+				"VolumeId": {
+					"Ref": "NewVolume"
+				},
+				"Device": "/dev/sdh"
+			}
+		}
+	},
+
+	"Outputs": {
+		"InstanceId": {
+			"Description": "Instanceid of the newly created EC2 Instance",
+			"Value": {
+				"Ref": "EC2 instance"
+			},
+			"AZ": {
+				"Description": "Availability zone of the newly created instance",
+				"Value": {
+					"Fn:: GetAtt": [
+						"EC2Instance",
+						"AvailabilityZone"
+					]
+				}
+			},
+			"PrivateIP": {
+				"Description": "Private IP of the newly created instance",
+				"Value": {
+					"Fn: :GetAtt": [
+						"EC2Instance",
+						"PrivateIP"
+					]
+				}
+			}
+		}
+	}
+}

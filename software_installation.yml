@@ -1,0 +1,15 @@
+---
+- hosts :"172.31.15.112"
+  connection : winrm
+  gather_facts: false
+  tasks :
+    - name: Bring EBS online
+      win_command: Poweshell.exe "Set-Disk -Number 1 -IsOffline $False"
+    - name: Install IIS
+      win_feature:
+         name : "Web-Server"
+         state : present 
+         restart : yes
+         include_sub_features : yes
+         include_management_tools : yes
+       
